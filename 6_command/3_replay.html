@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="replay">replay</button>
+    <script>
+      const opts = {
+        attack() {
+          console.log("attack");
+        },
+        defense() {
+          console.log("defense");
+        },
+        jump() {
+          console.log("jump");
+        },
+        crouch() {
+          console.log("crouch");
+        },
+      };
+
+      const commands = {
+        87: "jump",
+        83: "crouch",
+        65: "defense",
+        68: "attack",
+      };
+
+      function makeCommand(receiver, state) {
+        return function () {
+          if (state) {
+            receiver[state]();
+          }
+          return state;
+        };
+      }
+
+      const commandCache = [];
+
+      document.onkeydown = function (e) {
+        const keyCode = e.keyCode,
+          command = makeCommand(opts, commands[keyCode]);
+        command() ? commandCache.push(command) : "";
+      };
+
+      const replay = document.querySelector("#replay");
+      replay.onclick = function () {
+        commandCache.forEach((fn) => {
+          fn();
+        });
+      };
+    </script>
+  </body>
+</html>

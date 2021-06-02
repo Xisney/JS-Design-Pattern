@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <!-- 插件式的验证 -->
+    name: <input type="text" id="name" /> psw:
+    <input type="password" id="psw" />
+    <button id="login">login</button>
+    <script>
+      // 通过aop返回的其实是个新函数，故而原函数对象上保存的属性会丢失
+      // 代理模式与装饰者模式
+      // 代理模式目的是，当直接访问本体不方便或者不符合需要时，为这个对象提供一个替代者
+      // 代理模式强调一种关系，这种关系是静态的，是提前定义好的
+      // 而装饰者模式的作用是为对象动态的加入行为，用于一开始不能确定对象的全部功能
+
+      Function.prototype.before = function (fn) {
+        const _self = this;
+        return function () {
+          // 验证未通过不执行
+          if (fn.apply(this, arguments) === false) {
+            return alert("forbid");
+          }
+          return _self.apply(this, arguments);
+        };
+      };
+
+      const validate = () => {
+        const name = document.querySelector("#name").value;
+        const psw = document.querySelector("#psw").value;
+
+        if (name.trim() === "" || psw.trim() === "") {
+          return false;
+        }
+        return true;
+      };
+
+      const login = () => {
+        console.log("login");
+      };
+
+      const btn = document.querySelector("#login");
+      btn.onclick = login.before(validate);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      #ball {
+        position: absolute;
+        top: 40px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: pink;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="ball"></div>
+    target <input type="text" id="pos" />
+    <button id="exe">move</button>
+    <button id="undo">undo</button>
+
+    <script src="../2_strategy/3_animate.js"></script>
+    <script>
+      const ball = document.querySelector("#ball");
+      const pos = document.querySelector("#pos");
+      const btn = document.querySelector("#exe");
+      const undoBtn = document.querySelector("#undo");
+
+      class MoveCommand {
+        constructor(receiver, pos) {
+          this.receiver = receiver;
+          this.pos = pos;
+          this.oldPos = null;
+        }
+        execute() {
+          this.receiver.start("left", this.pos, 1000, "linear");
+          // 同步先于异步代码执行
+          this.oldPos =
+            this.receiver.dom.getBoundingClientRect()[
+              this.receiver.propertyName
+            ];
+        }
+        undo() {
+          this.receiver.start("left", this.oldPos, 1000, "linear");
+        }
+      }
+
+      // 等到需要这个对象时才创建
+      let moveCommand = null;
+
+      btn.onclick = function () {
+        const animate = new Animate(ball);
+        moveCommand = new MoveCommand(animate, pos.value);
+        moveCommand.execute();
+      };
+
+      undoBtn.onclick = function () {
+        moveCommand ?? moveCommand.undo();
+      };
+    </script>
+  </body>
+</html>

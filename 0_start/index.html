@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      span {
+        background-color: pink;
+        margin-right: 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      function timechunk(arr, fn, count = 5) {
+        let flag = { timer: null };
+
+        const run = () => {
+          arr.splice(0, count).forEach((el) => {
+            fn(el);
+          });
+          flag.timer = setTimeout(() => {
+            run();
+          }, 500);
+        };
+
+        run();
+        return flag;
+      }
+
+      const div = document.querySelector("#root");
+      const arr = Array(100)
+        .fill(0)
+        .map((_, index) => index);
+      const timer = timechunk(arr, (el) => {
+        const span = document.createElement("span");
+        span.innerHTML = el;
+        div.appendChild(span);
+      });
+    </script>
+  </body>
+</html>
